@@ -1,4 +1,5 @@
 # scanOVAL-parser
+
 ## How to run:
 1. Build the program with `cargo build --release`
 2. Place `report.html`, `capec.csv`, `cwe.csv` and `vulnlist.csv`(can be found [here](https://drive.google.com/file/d/1qpauKzEZRhWc57zmvnfVhePOEsOAUpCD/view?usp=sharing) with executable where:
@@ -22,6 +23,7 @@ If you've faced a bug, please report it in issues. Provide the following informa
   1. Report file
   2. Csv files
   3. Given error
+
 The code has almost no error handling now(it'll be added later) so all the errors displayed in console/terminal.
 
 ## Contributing
