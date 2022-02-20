@@ -16,3 +16,13 @@ This file contains following tab-separated columns:
   Medium - CAPEC ids with the medium likelihood of attack;
   Low - CAPEC ids with the low likelihood of attack;
   Zero - CAPEC ids with the zero likelihood of attack;
+
+## Found a bug?
+If you've faced a bug, please report it in issues. Provide the following information:
+  1. Report file
+  2. Csv files
+  3. Given error
+The code has almost no error handling now(it'll be added later) so all the errors displayed in console/terminal.
+
+## Contributing
+The project welcomes contributions and suggestions. If you have ones, create an issue or open a pull request.
