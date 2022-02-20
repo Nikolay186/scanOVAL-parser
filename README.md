@@ -2,7 +2,7 @@
 
 ## How to run:
 1. Build the program with `cargo build --release` or download executable for your system from [releases page](https://github.com/Nikolay186/scanOVAL-parser/releases)
-2. Place `report.html`, `capec.csv`, `cwe.csv` and `vulnlist.csv`(can be found [here](https://drive.google.com/file/d/1qpauKzEZRhWc57zmvnfVhePOEsOAUpCD/view?usp=sharing) with executable where:
+2. Place `report.html`, `capec.csv`, `cwe.csv` and `vulnlist.csv`(can be found [here](https://drive.google.com/file/d/1qpauKzEZRhWc57zmvnfVhePOEsOAUpCD/view?usp=sharing)) with executable where:
   report.html - exported report from ScanOVAL;
   vulnlist.csv - semicolon-separated file with bdu, cve(or other specs id) and cwe ids;
   cwe.csv - comma-separated file with cwe id and capec ids related to it;
