@@ -11,11 +11,11 @@ fn main() {
 
     get_capecs(&mut result);
 
-    print(result);
+    print(&mut result);
 }
 
 fn get_vuln_list(bdu_codes: Vec<String>) -> Vec<Vec<String>> {
-    let vuln_file = File::open("vulnlist.csv")
+    let vuln_file = File::open("/home/nikolay/projects/oval_parser/src/vulnlist.csv")
         .expect("Cannot open vuln file");
     let reader = BufReader::new(vuln_file);
     let mut result = vec![];
@@ -64,7 +64,7 @@ fn get_vuln_list(bdu_codes: Vec<String>) -> Vec<Vec<String>> {
 }
 
 fn parse_report() -> Vec<String> {
-    let report = fs::read_to_string("report.html").unwrap();
+    let report = fs::read_to_string("/home/nikolay/projects/oval_parser/src/report.html").unwrap();
     let html = Html::parse_fragment(&report);
     let mut bdu_codes = vec![];
 
@@ -81,11 +81,10 @@ fn parse_report() -> Vec<String> {
     bdu_codes
 }
 
-fn get_capecs(codes: &mut Vec<Vec<String>>) -> Vec<Vec<String>> {
-    let res: Vec<Vec<String>> = vec![];
+fn get_capecs(codes: &mut Vec<Vec<String>>) {
 
     let reader =
-        BufReader::new(File::open("cwe.csv").unwrap());
+        BufReader::new(File::open("/home/nikolay/projects/oval_parser/src/cwe.csv").unwrap());
     let lines = reader.lines().map(|line| {
         line.unwrap()
             .split(';')
@@ -95,7 +94,7 @@ fn get_capecs(codes: &mut Vec<Vec<String>>) -> Vec<Vec<String>> {
     let cwe_capecs: Vec<_> = lines.collect();
 
     let reader =
-        BufReader::new(File::open("capec.csv").unwrap());
+        BufReader::new(File::open("/home/nikolay/projects/oval_parser/src/capec.csv").unwrap());
     let lines = reader.lines().map(|line| {
         line.unwrap()
             .split(',')
@@ -124,8 +123,6 @@ fn get_capecs(codes: &mut Vec<Vec<String>>) -> Vec<Vec<String>> {
             parse_capecs(capecs, capec_csv.clone(), row);
         }
     }
-
-    res
 }
 
 fn parse_capecs(capecs: Vec<String>, capecs_csv: Vec<Vec<String>>, row: &mut Vec<String>) {
@@ -141,7 +138,8 @@ fn parse_capecs(capecs: Vec<String>, capecs_csv: Vec<Vec<String>>, row: &mut Vec
     }
 }
 
-fn print(table: Vec<Vec<String>>) {
+fn print(table: &mut Vec<Vec<String>>) {
+    prettify(table);
     let mut output = File::create("result.csv").unwrap();
     writeln!(output, "BDU\tCVE\tCWE\tHigh\tMedium\tLow\tZero");
     for row in table {
@@ -156,5 +154,16 @@ fn print(table: Vec<Vec<String>>) {
             l = row[5],
             z = row[6],
         );
+    }
+}
+
+fn prettify(table: &mut Vec<Vec<String>>) {
+    for row in table {
+        for cell in row {
+            *cell = cell.trim_end_matches(", ").to_string();
+            if cell.is_empty() {
+                cell.push('-');
+            }
+        }
     }
 }
