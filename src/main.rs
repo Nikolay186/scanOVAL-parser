@@ -11,7 +11,7 @@ fn main() {
 
     get_capecs(&mut result);
 
-    print(result);
+    print(&mut result);
 }
 
 fn get_vuln_list(bdu_codes: Vec<String>) -> Vec<Vec<String>> {
@@ -141,7 +141,8 @@ fn parse_capecs(capecs: Vec<String>, capecs_csv: Vec<Vec<String>>, row: &mut Vec
     }
 }
 
-fn print(table: Vec<Vec<String>>) {
+fn print(table: &mut Vec<Vec<String>>) {
+    prettify(table);
     let mut output = File::create("result.csv").unwrap();
     writeln!(output, "BDU\tCVE\tCWE\tHigh\tMedium\tLow\tZero");
     for row in table {
@@ -156,5 +157,16 @@ fn print(table: Vec<Vec<String>>) {
             l = row[5],
             z = row[6],
         );
+    }
+}
+
+fn prettify(table: &mut Vec<Vec<String>>) {
+    for row in table {
+        for cell in row {
+            *cell = cell.trim_end_matches(", ").to_string();
+            if cell.is_empty() {
+                cell.push('-');
+            }
+        }
     }
 }
