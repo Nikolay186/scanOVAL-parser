@@ -13,6 +13,7 @@
     `capec.csv` - comma-separated file with capec id and it's likelihood of attack.
   
 3. Run the executable
+
 Output will be written to `result.csv` which placed in the same directory as the executable. 
 This file contains following tab-separated columns:
 
