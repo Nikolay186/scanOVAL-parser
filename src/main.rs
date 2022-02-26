@@ -162,7 +162,7 @@ fn print(table: &mut Vec<Vec<String>>, print_bdu: bool) {
     }
 
     if print_bdu {
-        let mut output = File::create("/home/nikolay/Desktop/bdu.csv").unwrap();
+        let mut output = File::create("bdu.csv").unwrap();
         for row in table {
             writeln!(output, "{bdu}", bdu = row[0]);
         }
