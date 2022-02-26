@@ -1,22 +1,30 @@
 use scraper::{Html, Selector};
 use std::io::{BufRead, BufReader};
 use std::{
+    env,
     fs::{self, File},
     io::Write,
 };
 
 fn main() {
+    let args: Vec<String> = env::args().collect();
     let bdu_codes = parse_report();
     let mut result = get_vuln_list(bdu_codes);
-
+    let mut bdu = false;
     get_capecs(&mut result);
 
-    print(&mut result);
+    if args.len() > 0 {
+        if args[1] == String::from("--separate-bdu") {
+            bdu = true;
+        }
+    }
+
+    print(&mut result, bdu);
 }
 
 fn get_vuln_list(bdu_codes: Vec<String>) -> Vec<Vec<String>> {
-    let vuln_file = File::open("vulnlist.csv")
-        .expect("Cannot open vuln file");
+    let vuln_file =
+        File::open("vulnlist.csv").expect("Cannot open vuln file");
     let reader = BufReader::new(vuln_file);
     let mut result = vec![];
 
@@ -51,7 +59,7 @@ fn get_vuln_list(bdu_codes: Vec<String>) -> Vec<Vec<String>> {
                     .collect::<String>();
 
                 result.push(Vec::from([
-                    record[0].to_owned(),
+                    record[0].to_owned().split_once(':').unwrap().1.to_owned(),
                     cve,
                     cwe.trim_end_matches(',').to_owned(),
                 ]));
@@ -81,11 +89,8 @@ fn parse_report() -> Vec<String> {
     bdu_codes
 }
 
-fn get_capecs(codes: &mut Vec<Vec<String>>) -> Vec<Vec<String>> {
-    let res: Vec<Vec<String>> = vec![];
-
-    let reader =
-        BufReader::new(File::open("cwe.csv").unwrap());
+fn get_capecs(codes: &mut Vec<Vec<String>>) {
+    let reader = BufReader::new(File::open("cwe.csv").unwrap());
     let lines = reader.lines().map(|line| {
         line.unwrap()
             .split(';')
@@ -94,8 +99,7 @@ fn get_capecs(codes: &mut Vec<Vec<String>>) -> Vec<Vec<String>> {
     });
     let cwe_capecs: Vec<_> = lines.collect();
 
-    let reader =
-        BufReader::new(File::open("capec.csv").unwrap());
+    let reader = BufReader::new(File::open("capec.csv").unwrap());
     let lines = reader.lines().map(|line| {
         line.unwrap()
             .split(',')
@@ -124,8 +128,6 @@ fn get_capecs(codes: &mut Vec<Vec<String>>) -> Vec<Vec<String>> {
             parse_capecs(capecs, capec_csv.clone(), row);
         }
     }
-
-    res
 }
 
 fn parse_capecs(capecs: Vec<String>, capecs_csv: Vec<Vec<String>>, row: &mut Vec<String>) {
@@ -141,11 +143,11 @@ fn parse_capecs(capecs: Vec<String>, capecs_csv: Vec<Vec<String>>, row: &mut Vec
     }
 }
 
-fn print(table: &mut Vec<Vec<String>>) {
+fn print(table: &mut Vec<Vec<String>>, print_bdu: bool) {
     prettify(table);
     let mut output = File::create("result.csv").unwrap();
     writeln!(output, "BDU\tCVE\tCWE\tHigh\tMedium\tLow\tZero");
-    for row in table {
+    for row in &mut *table {
         writeln!(
             output,
             "{bdu}\t{cve}\t{cwe}\t{h}\t{m}\t{l}\t{z}",
@@ -157,6 +159,13 @@ fn print(table: &mut Vec<Vec<String>>) {
             l = row[5],
             z = row[6],
         );
+    }
+
+    if print_bdu {
+        let mut output = File::create("/home/nikolay/Desktop/bdu.csv").unwrap();
+        for row in table {
+            writeln!(output, "{bdu}", bdu = row[0]);
+        }
     }
 }
 
