@@ -13,7 +13,7 @@ fn main() {
     let mut bdu = false;
     get_capecs(&mut result);
 
-    if args.len() > 0 {
+    if args.len() > 1 {
         if args[1] == String::from("--separate-bdu") {
             bdu = true;
         }
